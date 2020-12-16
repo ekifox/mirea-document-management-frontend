@@ -4,212 +4,212 @@
  */
 
 export interface paths {
-  "/": {
-    get: operations["AppController_getHello"];
-  };
-  "/user": {
-    get: operations["UserController_me"];
-    patch: operations["UserController_update"];
-  };
-  "/department": {
-    get: operations["DepartmentController_list"];
-  };
-  "/authentication/register": {
-    post: operations["AuthenticationController_register"];
-  };
-  "/authentication/login": {
-    post: operations["AuthenticationController_login"];
-  };
-  "/admin/confirmUser": {
-    post: operations["AdminController_confirmUser"];
-  };
-  "/document/{uuid}": {
-    get: operations["DocumentController_get"];
-  };
-  "/document": {
-    put: operations["DocumentController_create"];
-  };
-  "/document/upload": {
-    put: operations["DocumentController_upload"];
-  };
-  "/document/auditor": {
-    post: operations["DocumentAuditorController_audit"];
-  };
+    '/': {
+        get: operations['AppController_getHello']
+    }
+    '/user': {
+        get: operations['UserController_me']
+        patch: operations['UserController_update']
+    }
+    '/department': {
+        get: operations['DepartmentController_list']
+    }
+    '/authentication/register': {
+        post: operations['AuthenticationController_register']
+    }
+    '/authentication/login': {
+        post: operations['AuthenticationController_login']
+    }
+    '/admin/confirmUser': {
+        post: operations['AdminController_confirmUser']
+    }
+    '/document/{uuid}': {
+        get: operations['DocumentController_get']
+    }
+    '/document': {
+        put: operations['DocumentController_create']
+    }
+    '/document/upload': {
+        put: operations['DocumentController_upload']
+    }
+    '/document/auditor': {
+        post: operations['DocumentAuditorController_audit']
+    }
 }
 
 export interface operations {
-  AppController_getHello: {
-    parameters: {};
-    responses: {
-      "200": unknown;
-    };
-  };
-  UserController_me: {
-    parameters: {};
-    responses: {
-      "200": unknown;
-    };
-  };
-  UserController_update: {
-    parameters: {};
-    responses: {
-      "200": unknown;
-    };
-  };
-  DepartmentController_list: {
-    parameters: {};
-    responses: {
-      "200": {
-        "application/json": components["schemas"]["DepartmentEntity"][];
-      };
-    };
-  };
-  AuthenticationController_register: {
-    parameters: {};
-    requestBody: {
-      "application/json": components["schemas"]["AuthenticationRegisterInputDto"];
-    };
-    responses: {
-      "201": unknown;
-    };
-  };
-  AuthenticationController_login: {
-    parameters: {};
-    requestBody: {
-      "application/json": components["schemas"]["AuthenticationLoginInputDto"];
-    };
-    responses: {
-      "201": unknown;
-    };
-  };
-  AdminController_confirmUser: {
-    parameters: {};
-    responses: {
-      "201": unknown;
-    };
-  };
-  DocumentController_get: {
-    parameters: {
-      path: {
-        uuid: string;
-      };
-    };
-    responses: {
-      "200": {
-        "application/json": components["schemas"]["DocumentEntity"];
-      };
-    };
-  };
-  DocumentController_create: {
-    parameters: {};
-    requestBody: {
-      "application/json": components["schemas"]["DocumentCreateInput"];
-    };
-    responses: {
-      "201": {
-        "application/json": components["schemas"]["DocumentEntity"];
-      };
-    };
-  };
-  DocumentController_upload: {
-    parameters: {
-      query: {
-        uuid: string;
-      };
-    };
-    requestBody: {
-      "multipart/form-data": components["schemas"]["DocumentUploadInput"];
-    };
-    responses: {
-      "200": unknown;
-    };
-  };
-  DocumentAuditorController_audit: {
-    parameters: {};
-    requestBody: {
-      "application/json": components["schemas"]["DocumentAuditorAuditInput"];
-    };
-    responses: {
-      "201": unknown;
-    };
-  };
+    AppController_getHello: {
+        parameters: {}
+        responses: {
+            '200': unknown
+        }
+    }
+    UserController_me: {
+        parameters: {}
+        responses: {
+            '200': unknown
+        }
+    }
+    UserController_update: {
+        parameters: {}
+        responses: {
+            '200': unknown
+        }
+    }
+    DepartmentController_list: {
+        parameters: {}
+        responses: {
+            '200': {
+                'application/json': components['schemas']['DepartmentEntity'][]
+            }
+        }
+    }
+    AuthenticationController_register: {
+        parameters: {}
+        requestBody: {
+            'application/json': components['schemas']['AuthenticationRegisterInputDto']
+        }
+        responses: {
+            '201': unknown
+        }
+    }
+    AuthenticationController_login: {
+        parameters: {}
+        requestBody: {
+            'application/json': components['schemas']['AuthenticationLoginInputDto']
+        }
+        responses: {
+            '201': unknown
+        }
+    }
+    AdminController_confirmUser: {
+        parameters: {}
+        responses: {
+            '201': unknown
+        }
+    }
+    DocumentController_get: {
+        parameters: {
+            path: {
+                uuid: string
+            }
+        }
+        responses: {
+            '200': {
+                'application/json': components['schemas']['DocumentEntity']
+            }
+        }
+    }
+    DocumentController_create: {
+        parameters: {}
+        requestBody: {
+            'application/json': components['schemas']['DocumentCreateInput']
+        }
+        responses: {
+            '201': {
+                'application/json': components['schemas']['DocumentEntity']
+            }
+        }
+    }
+    DocumentController_upload: {
+        parameters: {
+            query: {
+                uuid: string
+            }
+        }
+        requestBody: {
+            'multipart/form-data': components['schemas']['DocumentUploadInput']
+        }
+        responses: {
+            '200': unknown
+        }
+    }
+    DocumentAuditorController_audit: {
+        parameters: {}
+        requestBody: {
+            'application/json': components['schemas']['DocumentAuditorAuditInput']
+        }
+        responses: {
+            '201': unknown
+        }
+    }
 }
 
 export interface components {
-  schemas: {
-    UserEntity: {
-      id: number;
-      login: string;
-      passwordHash: string;
-      firstName: string;
-      middleName: string;
-      lastName: string;
-      phone: string;
-      email: string;
-      departmentId: number;
-      dateOfBirth: string;
-      role: string;
-      verified: boolean;
-      createdAt: string;
-      updatedAt: string;
-    };
-    DepartmentEntity: {
-      id: number;
-      name: string;
-      users: components["schemas"]["UserEntity"][];
-    };
-    AuthenticationRegisterInputDto: {
-      /**
-       * Логин пользователя
-       */
-      login: string;
-      /**
-       * Пароль пользователя
-       */
-      password: string;
-      /**
-       * Повторный пароль для подтверждения правильности ввода
-       */
-      passwordConfirmation: string;
-    };
-    AuthenticationLoginInputDto: {
-      /**
-       * Логин пользователя
-       */
-      login: string;
-      /**
-       * Пароль пользователя
-       */
-      password: string;
-    };
-    DocumentEntity: {
-      id: string;
-      title: string;
-      userId: number;
-      status: string;
-      isAgreed: boolean;
-      auditors: any[][];
-    };
-    DocumentCreateInput: {
-      /**
-       * Название документа
-       */
-      title: string;
-      /**
-       * Массив пользовательских идентификаторов аудиторов
-       */
-      auditorUserIds: number[];
-    };
-    DocumentUploadInput: { document: string[] };
-    DocumentAuditorAuditInput: {
-      /**
-       * Document ID
-       */
-      documentId: number;
-      /**
-       * Согласен ли аудитор согласовать документ
-       */
-      isAgreed: boolean;
-    };
-  };
+    schemas: {
+        UserEntity: {
+            id: number
+            login: string
+            passwordHash: string
+            firstName: string
+            middleName: string
+            lastName: string
+            phone: string
+            email: string
+            departmentId: number
+            dateOfBirth: string
+            role: string
+            verified: boolean
+            createdAt: string
+            updatedAt: string
+        }
+        DepartmentEntity: {
+            id: number
+            name: string
+            users: components['schemas']['UserEntity'][]
+        }
+        AuthenticationRegisterInputDto: {
+            /**
+             * Логин пользователя
+             */
+            login: string
+            /**
+             * Пароль пользователя
+             */
+            password: string
+            /**
+             * Повторный пароль для подтверждения правильности ввода
+             */
+            passwordConfirmation: string
+        }
+        AuthenticationLoginInputDto: {
+            /**
+             * Логин пользователя
+             */
+            login: string
+            /**
+             * Пароль пользователя
+             */
+            password: string
+        }
+        DocumentEntity: {
+            id: string
+            title: string
+            userId: number
+            status: string
+            isAgreed: boolean
+            auditors: any[][]
+        }
+        DocumentCreateInput: {
+            /**
+             * Название документа
+             */
+            title: string
+            /**
+             * Массив пользовательских идентификаторов аудиторов
+             */
+            auditorUserIds: number[]
+        }
+        DocumentUploadInput: { document: string[] }
+        DocumentAuditorAuditInput: {
+            /**
+             * Document ID
+             */
+            documentId: number
+            /**
+             * Согласен ли аудитор согласовать документ
+             */
+            isAgreed: boolean
+        }
+    }
 }
