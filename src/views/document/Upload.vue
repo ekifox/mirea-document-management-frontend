@@ -25,7 +25,7 @@ import { useToast } from 'vue-toastification'
 
 export default defineComponent({
     props: {
-        id: Number
+        id: String
     },
     setup(props) {
         const toast = useToast()

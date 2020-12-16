@@ -27,7 +27,7 @@ const router = createRouter({
             component: () => import('@/views/document/Create.vue')
         },
         {
-            path: '/document/upload',
+            path: '/document/upload/:idscore',
             name: 'documentUpload',
             props: true,
             component: () => import('@/views/document/Upload.vue')
@@ -37,6 +37,11 @@ const router = createRouter({
             name: 'documentGet',
             props: true,
             component: () => import('@/views/document/Get.vue')
+        },
+        {
+            path: '/document/search',
+            name: 'documentSearch',
+            component: () => import('@/views/document/Search.vue')
         }
     ]
 })

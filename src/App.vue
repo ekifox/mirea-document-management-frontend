@@ -23,16 +23,7 @@
     </nav>
 
     <router-view v-slot="{ Component }">
-        <suspense>
-            <template #default>
-                <component class="pt-5" :is="Component" />
-            </template>
-            <template #fallback>
-                <div>
-                    Loading...
-                </div>
-            </template>
-        </suspense>
+        <component class="pt-5" :is="Component" />
     </router-view>
 </template>
 
