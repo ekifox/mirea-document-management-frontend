@@ -233,6 +233,7 @@ export interface components {
       status: string;
       isAgreed: boolean;
       auditors: components["schemas"]["DocumentAuditorEntity"][];
+      user: components["schemas"]["UserEntity"];
     };
     DocumentCreateInput: {
       /**
@@ -248,6 +249,7 @@ export interface components {
     DocumentSearchItemResponse: {
       id: string;
       score: number;
+      highlight: string[];
       document: components["schemas"]["DocumentEntity"];
     };
     DocumentAuditorAuditInput: {

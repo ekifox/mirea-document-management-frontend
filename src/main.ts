@@ -27,7 +27,7 @@ const router = createRouter({
             component: () => import('@/views/document/Create.vue')
         },
         {
-            path: '/document/upload/:idscore',
+            path: '/document/upload/:id',
             name: 'documentUpload',
             props: true,
             component: () => import('@/views/document/Upload.vue')
