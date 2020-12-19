@@ -41,13 +41,15 @@
             <div class="row">
                 <div class="col-md-3" v-for="{ document, score, highlight } in response" :key="document.id">
                     <div class="card">
-                        <div class="card-header">{{ document.title }}</div>
+                        <div class="card-header">
+                            <div @click="openDocument(document.id)">{{ document.title }}</div>
+                        </div>
                         <div class="card-body">
                             <div class="alert alert-dark" v-for="(text, index) in highlight" :key="index">
                                 <p v-html="text" />
                             </div>
-                            <span class="badge badge-primary">Score: {{ score }}</span>
-                            <span class="badge badge-secondary ml-3"
+                            <span class="badge badge-primary mr-3">Score: {{ score }}</span>
+                            <span class="badge badge-secondary"
                                 >Автор: {{ document.user.lastName }} {{ document.user.firstName }}
                                 {{ document.user.middleName }}</span
                             >
@@ -72,6 +74,7 @@ export default defineComponent({
         const isLoading = ref(false)
 
         const toast = useToast()
+        const router = useRouter()
         const response = ref<paths['/document/search']['post']['responses']['201']['application/json']>([])
 
         async function doSearch() {
@@ -85,7 +88,11 @@ export default defineComponent({
             isLoading.value = false
         }
 
-        return { response, searchText, doSearch, isLoading }
+        async function openDocument(id: string) {
+            router.push({ name: 'documentGet', params: { id } })
+        }
+
+        return { response, searchText, doSearch, isLoading, openDocument }
     }
 })
 </script>

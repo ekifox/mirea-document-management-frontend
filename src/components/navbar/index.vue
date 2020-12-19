@@ -13,41 +13,45 @@
             >
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" v-if="!user">
-                <ul class="navbar-nav">
-                    <RouterItem to="/login" name="Аутентификация" />
-                    <RouterItem to="/register" name="Регистрация" />
-                </ul>
-            </div>
-            <div class="collapse navbar-collapse" v-else>
-                <ul class="navbar-nav">
-                    <RouterItem to="/document/search" name="Поиск" />
-                    <RouterItem to="/document/create" name="Добавить документ" />
-                </ul>
-            </div>
+            <template v-if="stateIsUserAuthed">
+                <div class="collapse navbar-collapse">
+                    <ul class="navbar-nav">
+                        <RouterItem to="/document/search" name="Поиск" />
+                        <RouterItem to="/document/create" name="Добавить документ" />
+                    </ul>
+                </div>
+                <form class="form-inline">
+                    <b-icon-person-fill />
+                    <div class="ml-2">
+                        {{ stateUser.lastName }} {{ stateUser.firstName }} {{ stateUser.middleName }}
+                    </div>
+                </form>
+            </template>
+            <template v-else>
+                <div class="collapse navbar-collapse">
+                    <ul class="navbar-nav">
+                        <RouterItem to="/login" name="Аутентификация" />
+                        <RouterItem to="/register" name="Регистрация" />
+                    </ul>
+                </div>
+            </template>
         </div>
     </nav>
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive } from 'vue'
-import { paths } from '@/common/openapi'
-import axios from '../../common/axios'
-import RouterItem from '@/components/routeritem'
+import { defineComponent, onMounted } from 'vue'
+import RouterItem from '@/components/routeritem/index.vue'
+import { stateUser, stateIsUserAuthed, actionLoadUser } from '@/common/store'
 
 export default defineComponent({
     components: {
         RouterItem
     },
     setup() {
-        const user = reactive({}) //as paths['/user']['get']['responses']['200']
+        onMounted(() => actionLoadUser())
 
-        async function loadUser() {
-            const { data } = await axios.get('/user')
-            Object.assign(user, data)
-        }
-
-        return { user }
+        return { stateUser, stateIsUserAuthed }
     }
 })
 </script>

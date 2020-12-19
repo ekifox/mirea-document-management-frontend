@@ -12,12 +12,10 @@
 </template>
 
 <script>
-import { defineComponent } from 'vue'
-
-export default defineComponent({
+export default {
     props: {
         to: String,
         name: String
     }
-})
+}
 </script>
