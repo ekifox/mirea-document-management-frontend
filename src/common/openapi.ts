@@ -11,6 +11,9 @@ export interface paths {
     get: operations["UserController_me"];
     patch: operations["UserController_update"];
   };
+  "/user/list": {
+    get: operations["UserController_list"];
+  };
   "/department": {
     get: operations["DepartmentController_list"];
   };
@@ -20,8 +23,8 @@ export interface paths {
   "/authentication/login": {
     post: operations["AuthenticationController_login"];
   };
-  "/admin/confirmUser": {
-    post: operations["AdminController_confirmUser"];
+  "/admin/user/verify": {
+    post: operations["AdminController_userVerify"];
   };
   "/document/{uuid}": {
     get: operations["DocumentController_get"];
@@ -56,10 +59,18 @@ export interface operations {
   UserController_me: {
     parameters: {};
     responses: {
-      "200": unknown;
+      "200": {
+        "application/json": components["schemas"]["UserEntity"];
+      };
     };
   };
   UserController_update: {
+    parameters: {};
+    responses: {
+      "200": unknown;
+    };
+  };
+  UserController_list: {
     parameters: {};
     responses: {
       "200": unknown;
@@ -91,8 +102,11 @@ export interface operations {
       "201": unknown;
     };
   };
-  AdminController_confirmUser: {
+  AdminController_userVerify: {
     parameters: {};
+    requestBody: {
+      "application/json": components["schemas"]["AdminUserVerifyInput"];
+    };
     responses: {
       "201": unknown;
     };
@@ -175,7 +189,7 @@ export interface components {
       lastName: string;
       phone: string;
       email: string;
-      departmentId: number;
+      departmentId: number | null;
       dateOfBirth: string;
       role: string;
       verified: boolean;
@@ -210,6 +224,12 @@ export interface components {
        * Пароль пользователя
        */
       password: string;
+    };
+    AdminUserVerifyInput: {
+      /**
+       * User ID
+       */
+      userId: number;
     };
     DocumentAuditorNoteEntity: {
       id: number;
@@ -256,7 +276,7 @@ export interface components {
       /**
        * Document ID
        */
-      documentId: number;
+      documentId: string;
       /**
        * Согласен ли аудитор согласовать документ
        */

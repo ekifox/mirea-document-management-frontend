@@ -18,11 +18,16 @@
                     <ul class="navbar-nav">
                         <RouterItem to="/document/search" name="Поиск" />
                         <RouterItem to="/document/create" name="Добавить документ" />
+                        <RouterItem
+                            to="/admin/users"
+                            name="Просмотреть пользователей"
+                            v-if="stateUser.role === 'ADMIN'"
+                        />
                     </ul>
                 </div>
                 <form class="form-inline">
-                    <b-icon-person-fill />
-                    <div class="ml-2">
+                    <b-icon-person-fill class="mr-2" />
+                    <div style="cursor: pointer" @click="$router.push({ name: 'userEdit' })">
                         {{ stateUser.lastName }} {{ stateUser.firstName }} {{ stateUser.middleName }}
                     </div>
                 </form>

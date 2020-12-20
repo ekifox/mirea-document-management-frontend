@@ -71,15 +71,29 @@
                             </ul>
                         </div>
 
+                        <button
+                            type="button"
+                            class="btn btn-success mr-3"
+                            @click="publishFileButton()"
+                            v-if="currentUserCreator && canBePublished"
+                        >
+                            Опубликовать
+                        </button>
+
                         <button type="button" class="btn btn-primary mr-3" @click="showFileButton()">
                             Скачать PDF
                         </button>
 
-                        <button type="button" class="btn btn-success" @click="publishFileButton()">
-                            Опубликовать
+                        <button
+                            type="button"
+                            class="btn btn-warning"
+                            @click="uploadFileButton()"
+                            v-if="currentUserCreator"
+                        >
+                            Обновить PDF
                         </button>
                     </div>
-                    <div class="col-md-6 col-lg-8" style="height: 800px;">
+                    <div class="col-md-6 col-lg-8" style="height: 900px;">
                         <div v-if="isPdfLoading"><Loader /></div>
                         <object
                             v-else
@@ -135,6 +149,7 @@ export default defineComponent({
         // buttons
 
         async function showFileButton() {
+            await getFileLink()
             const win = window.open(linkToPdf.value, '_blank')
             win!.focus()
         }
@@ -145,6 +160,10 @@ export default defineComponent({
             })
 
             toast.success('Файл добавлен в поиск')
+        }
+
+        async function uploadFileButton() {
+            router.push({ name: 'documentUpload', params: { id: props.id! } })
         }
 
         async function auditorButton(isAgreed = false) {
@@ -166,6 +185,8 @@ export default defineComponent({
             await getDocumentData()
             await getFileLink()
         })
+
+        const currentUserCreator = computed(() => document.userId === stateUser.id)
 
         const canBePublished = computed(
             () => document.auditors && document.auditors.every(x => x.status === 'ACCEPTED')
@@ -196,12 +217,14 @@ export default defineComponent({
             isPdfLoading,
             canBePublished,
             showFileButton,
+            uploadFileButton,
             publishFileButton,
             auditorButton,
             stateUser,
             currentUserAuditor,
             auditors,
-            documentStatuses
+            documentStatuses,
+            currentUserCreator
         }
     }
 })

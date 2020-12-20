@@ -43,6 +43,16 @@ const router = createRouter({
             path: '/document/search',
             name: 'documentSearch',
             component: () => import('@/views/document/Search.vue')
+        },
+        {
+            path: '/admin/users',
+            name: 'adminUsers',
+            component: () => import('@/views/admin/Users.vue')
+        },
+        {
+            path: '/user/edit',
+            name: 'userEdit',
+            component: () => import('@/views/user/Edit.vue')
         }
     ]
 })

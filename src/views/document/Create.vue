@@ -1,34 +1,29 @@
 <template>
     <div class="d-flex justify-content-center">
-        <div class="card" style="width: 30rem;">
+        <div class="card" style="width: 40%;">
             <div class="card-header">Создать документ</div>
             <div class="card-body">
-                <form>
-                    <div class="mb-3">
-                        <label for="input-title" class="form-label">Название</label>
-                        <input type="text" class="form-control" id="input-title" v-model="title" />
+                <div class="mb-3">
+                    <label for="input-title" class="form-label">Название</label>
+                    <input type="text" class="form-control" id="input-title" v-model="title" />
+                </div>
+                <div class="mb-3">
+                    <div class="form-group">
+                        <label for="input-auditor-user-ids">Выберите аудиторов</label>
+                        <select
+                            multiple
+                            class="form-control"
+                            id="input-auditor-user-ids"
+                            style="height: 20rem;"
+                            v-model="selectedAuditorIds"
+                        >
+                            <option v-for="auditor in auditorIdsList" :key="auditor.userId" :value="auditor.userId">{{
+                                auditor.name
+                            }}</option>
+                        </select>
                     </div>
-                    <div class="mb-3">
-                        <div class="form-group">
-                            <label for="input-auditor-user-ids">Выберите аудиторов</label>
-                            <select
-                                multiple
-                                class="form-control"
-                                id="input-auditor-user-ids"
-                                style="height: 20rem;"
-                                v-model="selectedAuditorIds"
-                            >
-                                <option
-                                    v-for="auditor in auditorIdsList"
-                                    :key="auditor.userId"
-                                    :value="auditor.userId"
-                                    >{{ auditor.name }}</option
-                                >
-                            </select>
-                        </div>
-                    </div>
-                    <button type="button" class="btn btn-primary" @click="createDocument()">Создать</button>
-                </form>
+                </div>
+                <button type="button" class="btn btn-primary" @click="createDocument()">Создать</button>
             </div>
         </div>
     </div>
