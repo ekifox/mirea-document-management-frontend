@@ -23,7 +23,7 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
 import { useToast } from 'vue-toastification'
-import axios from '@/common/axios'
+import axios, { axiosStandartErrorHandler } from '@/common/axios'
 import { useRouter } from 'vue-router'
 import { stateIsUserAuthed } from '../../common/store'
 
@@ -36,18 +36,22 @@ export default defineComponent({
         const password = ref('')
 
         async function auth() {
-            const { data } = await axios.post('/authentication/login', {
-                login: login.value,
-                password: password.value
-            })
+            try {
+                const { data } = await axios.post('/authentication/login', {
+                    login: login.value,
+                    password: password.value
+                })
 
-            if (!data) {
-                return false
+                if (!data) {
+                    return false
+                }
+
+                toast.success('Вы успешно вошли в аккаунт')
+
+                router.push({ name: 'documentSearch' })
+            } catch (e) {
+                axiosStandartErrorHandler(e)
             }
-
-            toast.success('Вы успешно вошли в аккаунт')
-
-            router.push({ name: 'documentSearch' })
         }
 
         if (stateIsUserAuthed.value) {

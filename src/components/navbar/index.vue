@@ -47,15 +47,13 @@
 <script lang="ts">
 import { defineComponent, onMounted } from 'vue'
 import RouterItem from '@/components/routeritem/index.vue'
-import { stateUser, stateIsUserAuthed, actionLoadUser } from '@/common/store'
+import { stateUser, stateIsUserAuthed } from '@/common/store'
 
 export default defineComponent({
     components: {
         RouterItem
     },
     setup() {
-        onMounted(() => actionLoadUser())
-
         return { stateUser, stateIsUserAuthed }
     }
 })

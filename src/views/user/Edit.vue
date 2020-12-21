@@ -1,7 +1,7 @@
 <template>
     <div class="d-flex justify-content-center">
         <div class="card" style="width: 30rem;">
-            <div class="card-header">Обновить свои данные</div>
+            <div class="card-header">Обновление своих данных</div>
             <div class="card-body">
                 <div class="mb-3">
                     <label class="form-label">Фамилия</label>
@@ -51,7 +51,7 @@
 </template>
 
 <script lang="ts">
-import axios from '@/common/axios'
+import axios, { axiosStandartErrorHandler } from '@/common/axios'
 import { defineComponent, onMounted, ref } from 'vue'
 import { paths } from '@/common/openapi'
 import { useToast } from 'vue-toastification'
@@ -77,8 +77,12 @@ export default defineComponent({
         }
 
         async function updateUser() {
-            await axios.patch('/user', stateUser)
-            toast.success('Данные обновлены')
+            try {
+                await axios.patch('/user', stateUser)
+                toast.success('Данные обновлены')
+            } catch (e) {
+                axiosStandartErrorHandler(e)
+            }
         }
 
         onMounted(() => loadDepartment())

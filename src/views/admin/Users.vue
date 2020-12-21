@@ -59,7 +59,7 @@ export default defineComponent({
         }
 
         async function getUsers() {
-            const { data } = await axios.get('/user/list')
+            const { data } = await axios.get('/admin/user/list')
             for (const user of data) {
                 user.createdAt = moment(user.createdAt).format('YYYY-MM-DD HH:mm:ss')
             }

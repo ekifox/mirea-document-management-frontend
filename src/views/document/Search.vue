@@ -42,7 +42,7 @@
                 <div class="col-md-3" v-for="{ document, score, highlight } in response" :key="document.id">
                     <div class="card">
                         <div class="card-header">
-                            <div @click="openDocument(document.id)">{{ document.title }}</div>
+                            <div style="cursor: pointer" @click="openDocument(document.id)">{{ document.title }}</div>
                         </div>
                         <div class="card-body">
                             <div class="alert alert-dark" v-for="(text, index) in highlight" :key="index">

@@ -1,6 +1,6 @@
 <template>
     <div class="d-flex justify-content-center">
-        <div class="card" style="width: 40%;">
+        <div class="card" style="width: 50%;">
             <div class="card-header">Создать документ</div>
             <div class="card-body">
                 <div class="mb-3">
@@ -30,11 +30,12 @@
 </template>
 
 <script lang="ts">
-import axios from '@/common/axios'
+import axios, { axiosStandartErrorHandler } from '@/common/axios'
 import { defineComponent, onMounted, ref } from 'vue'
 import { paths } from '@/common/openapi'
 import { useRouter } from 'vue-router'
 import { useToast } from 'vue-toastification'
+import { stateUser } from '../../common/store'
 
 interface IAuditorListItem {
     name: string
@@ -51,8 +52,12 @@ function useDepartment() {
 
         for (const department of data) {
             for (const user of department.users) {
+                if (user.id === stateUser.id) {
+                    continue
+                }
+
                 auditorIdsList.value.push({
-                    name: `${user.lastName} ${user.firstName} ${user.middleName} - ${department.name}`,
+                    name: `${department.name} - ${user.lastName} ${user.firstName} ${user.middleName} `,
                     userId: user.id
                 })
             }
@@ -70,17 +75,21 @@ function useDocument() {
     const selectedAuditorIds = ref<number[]>([])
 
     async function createDocument() {
-        const { data } = await axios.put<paths['/document']['put']['responses']['201']['application/json']>(
-            '/document',
-            {
-                title: title.value,
-                auditorUserIds: selectedAuditorIds.value
-            }
-        )
+        try {
+            const { data } = await axios.put<paths['/document']['put']['responses']['201']['application/json']>(
+                '/document',
+                {
+                    title: title.value,
+                    auditorUserIds: selectedAuditorIds.value
+                }
+            )
 
-        toast.success('Документ создан')
+            toast.success('Документ создан')
 
-        router.push({ name: 'documentUpload', params: { id: data.id } })
+            router.push({ name: 'documentUpload', params: { id: data.id } })
+        } catch (e) {
+            axiosStandartErrorHandler(e)
+        }
     }
 
     return { title, selectedAuditorIds, createDocument }

@@ -2,7 +2,7 @@
     <div class="d-flex justify-content-center">
         <div class="card" style="width: 80%">
             <div class="card-header">Просмотр документа</div>
-            <div class="card-body">
+            <div class="card-body" v-if="document && document.user">
                 <div class="row">
                     <div class="col-md-6 col-lg-4">
                         <div class="mb-3">
@@ -26,6 +26,18 @@
                                 type="text"
                                 class="form-control"
                                 :value="document.isAgreed ? 'Да' : 'Нет'"
+                                disabled
+                            />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Название</label>
+                            <input
+                                type="text"
+                                class="form-control"
+                                :value="
+                                    `${document.user.lastName} ${document.user.firstName} ${document.user.middleName}`
+                                "
                                 disabled
                             />
                         </div>
@@ -116,8 +128,107 @@ import { computed, defineComponent, onMounted, reactive, ref } from 'vue'
 import { paths } from '@/common/openapi'
 import { useRouter } from 'vue-router'
 import { useToast } from 'vue-toastification'
-import Loader from '@/components/loader/index.vue'
 import { stateUser } from '@/common/store'
+import Loader from '@/components/loader/index.vue'
+
+type documentInterface = paths['/document/{uuid}']['get']['responses']['200']['application/json']
+
+const documentStatuses = {
+    CREATED: 'Недавно создан',
+    AUDITOR_REJECTED: 'Возвращен на доработку',
+    AUDITOR_AWAITING: 'Проверяется аудиторами',
+    PUBLISHED: 'Опубликован'
+}
+
+function useDocument(documentId: string) {
+    const document = reactive({}) as documentInterface
+
+    async function getDocumentData() {
+        const { data } = await axios.get(`/document/${documentId}`)
+        Object.assign(document, data)
+    }
+
+    return { document, getDocumentData }
+}
+
+function useDocumentButtons(documentId: string) {
+    const toast = useToast()
+    const router = useRouter()
+
+    async function publishFileButton() {
+        const { data } = await axios.post('/document/publish', {
+            uuid: documentId
+        })
+
+        toast.success('Файл добавлен в поиск')
+    }
+
+    async function uploadFileButton() {
+        router.push({ name: 'documentUpload', params: { id: documentId } })
+    }
+
+    async function auditorButton(isAgreed = false) {
+        const { data } = await axios.post('/document/auditor', {
+            documentId,
+            isAgreed
+        })
+
+        if (!data) {
+            return false
+        }
+
+        router.go(0)
+    }
+
+    return { publishFileButton, uploadFileButton, auditorButton }
+}
+
+function useDocumentComputed(document: documentInterface) {
+    const currentUserCreator = computed(() => document.userId === stateUser.id)
+
+    const canBePublished = computed(() => document.auditors && document.auditors.every(x => x.status === 'ACCEPTED'))
+
+    const currentUserAuditor = computed(() =>
+        document.auditors ? document.auditors.find(x => x.userId === stateUser.id && x.status === 'AWAITING') : false
+    )
+
+    const auditors = computed(() =>
+        document.auditors && currentUserAuditor.value
+            ? document.auditors.filter(x => x.userId !== stateUser.id)
+            : document.auditors
+    )
+
+    return {
+        canBePublished,
+        currentUserAuditor,
+        auditors,
+        currentUserCreator
+    }
+}
+
+function useDocumentLink(documentId: string) {
+    const linkToPdf = ref('')
+    const isPdfLoading = ref(true)
+
+    async function getFileLink() {
+        const { data } = await axios.post('/document/link', { uuid: documentId })
+        linkToPdf.value = data
+        isPdfLoading.value = false
+    }
+
+    async function showFileButton() {
+        await getFileLink()
+        const win = window.open(linkToPdf.value, '_blank')
+        win!.focus()
+    }
+
+    return {
+        linkToPdf,
+        isPdfLoading,
+        showFileButton,
+        getFileLink
+    }
+}
 
 export default defineComponent({
     components: {
@@ -127,103 +238,31 @@ export default defineComponent({
         id: String
     },
     setup(props) {
-        const toast = useToast()
-        const router = useRouter()
-
-        const document = reactive({}) as paths['/document/{uuid}']['get']['responses']['200']['application/json']
-
-        const linkToPdf = ref('')
-        const isPdfLoading = ref(true)
-
-        async function getDocumentData() {
-            const { data } = await axios.get(`/document/${props.id}`)
-            Object.assign(document, data)
-        }
-
-        async function getFileLink() {
-            const { data } = await axios.post('/document/link', { uuid: props.id })
-            linkToPdf.value = data
-            isPdfLoading.value = false
-        }
-
-        // buttons
-
-        async function showFileButton() {
-            await getFileLink()
-            const win = window.open(linkToPdf.value, '_blank')
-            win!.focus()
-        }
-
-        async function publishFileButton() {
-            const { data } = await axios.post('/document/publish', {
-                uuid: props.id
-            })
-
-            toast.success('Файл добавлен в поиск')
-        }
-
-        async function uploadFileButton() {
-            router.push({ name: 'documentUpload', params: { id: props.id! } })
-        }
-
-        async function auditorButton(isAgreed = false) {
-            const { data } = await axios.post('/document/auditor', {
-                documentId: props.id,
-                isAgreed
-            })
-
-            if (!data) {
-                return false
-            }
-
-            router.go(0)
-        }
-
-        // main
+        const { document, getDocumentData } = useDocument(props.id!)
+        const { uploadFileButton, publishFileButton, auditorButton } = useDocumentButtons(props.id!)
+        const { canBePublished, currentUserAuditor, auditors, currentUserCreator } = useDocumentComputed(document)
+        const { linkToPdf, isPdfLoading, showFileButton, getFileLink } = useDocumentLink(props.id!)
 
         onMounted(async () => {
             await getDocumentData()
             await getFileLink()
+
+            setInterval(() => getDocumentData(), 3000)
         })
-
-        const currentUserCreator = computed(() => document.userId === stateUser.id)
-
-        const canBePublished = computed(
-            () => document.auditors && document.auditors.every(x => x.status === 'ACCEPTED')
-        )
-
-        const currentUserAuditor = computed(() =>
-            document.auditors
-                ? document.auditors.find(x => x.userId === stateUser.id && x.status === 'AWAITING')
-                : false
-        )
-
-        const auditors = computed(() =>
-            document.auditors && currentUserAuditor.value
-                ? document.auditors.filter(x => x.userId !== stateUser.id)
-                : document.auditors
-        )
-
-        const documentStatuses = {
-            CREATED: 'Недавно создан',
-            AUDITOR_REJECTED: 'Возвращен на доработку',
-            AUDITOR_AWAITING: 'Проверяется аудиторами',
-            PUBLISHED: 'Опубликован'
-        }
 
         return {
             document,
             linkToPdf,
             isPdfLoading,
-            canBePublished,
             showFileButton,
+            documentStatuses,
             uploadFileButton,
             publishFileButton,
             auditorButton,
             stateUser,
+            canBePublished,
             currentUserAuditor,
             auditors,
-            documentStatuses,
             currentUserCreator
         }
     }

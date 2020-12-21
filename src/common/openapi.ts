@@ -60,12 +60,15 @@ export interface operations {
     parameters: {};
     responses: {
       "200": {
-        "application/json": components["schemas"]["UserEntity"];
+        "application/json": components["schemas"]["UserMeResponse"];
       };
     };
   };
   UserController_update: {
     parameters: {};
+    requestBody: {
+      "application/json": components["schemas"]["UserEntity"];
+    };
     responses: {
       "200": unknown;
     };
@@ -180,6 +183,20 @@ export interface operations {
 
 export interface components {
   schemas: {
+    UserMeResponse: {
+      id: number;
+      login: string;
+      firstName: string;
+      middleName: string;
+      lastName: string;
+      phone: string;
+      email: string;
+      departmentId: number | null;
+      dateOfBirth: string;
+      role: string;
+      verified: boolean;
+      createdAt: string;
+    };
     UserEntity: {
       id: number;
       login: string;
@@ -231,20 +248,12 @@ export interface components {
        */
       userId: number;
     };
-    DocumentAuditorNoteEntity: {
-      id: number;
-      documentAuditorId: number;
-      userId: number;
-      description: string;
-      createdAt: string;
-    };
     DocumentAuditorEntity: {
       id: number;
       documentId: string;
       userId: number;
       status: string;
       user: components["schemas"]["UserEntity"];
-      notes: components["schemas"]["DocumentAuditorNoteEntity"][];
     };
     DocumentEntity: {
       id: string;

@@ -1,64 +1,16 @@
+import '@forevolve/bootstrap-dark/dist/css/bootstrap-dark.css'
+import 'vue-toastification/dist/index.css'
+
 import { BootstrapIconsPlugin } from 'bootstrap-icons-vue'
-import { createRouter, createWebHistory } from 'vue-router'
 import { createApp } from 'vue'
 import Toast, { POSITION } from 'vue-toastification'
-import 'vue-toastification/dist/index.css'
-import '@forevolve/bootstrap-dark/dist/css/bootstrap-dark.css'
-
 import App from './App.vue'
-const app = createApp(App)
+import router from './router'
 
-const router = createRouter({
-    history: createWebHistory(process.env.BASE_URL),
-    routes: [
-        {
-            alias: '/',
-            path: '/login',
-            name: 'login',
-            component: () => import('@/views/auth/Login.vue')
-        },
-        {
-            path: '/register',
-            name: 'register',
-            component: () => import('@/views/auth/Register.vue')
-        },
-        {
-            path: '/document/create',
-            name: 'documentCreate',
-            component: () => import('@/views/document/Create.vue')
-        },
-        {
-            path: '/document/upload/:id',
-            name: 'documentUpload',
-            props: true,
-            component: () => import('@/views/document/Upload.vue')
-        },
-        {
-            path: '/document/:id',
-            name: 'documentGet',
-            props: true,
-            component: () => import('@/views/document/Get.vue')
-        },
-        {
-            path: '/document/search',
-            name: 'documentSearch',
-            component: () => import('@/views/document/Search.vue')
-        },
-        {
-            path: '/admin/users',
-            name: 'adminUsers',
-            component: () => import('@/views/admin/Users.vue')
-        },
-        {
-            path: '/user/edit',
-            name: 'userEdit',
-            component: () => import('@/views/user/Edit.vue')
-        }
-    ]
-})
+const app = createApp(App)
 
 app.use(router)
 app.use(BootstrapIconsPlugin)
-app.use(Toast, { position: POSITION.TOP_RIGHT, timeout: 10000 })
+app.use(Toast, { position: POSITION.TOP_RIGHT, timeout: 6000 })
 
 app.mount('#app')

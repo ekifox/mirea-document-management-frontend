@@ -17,31 +17,24 @@ client.interceptors.request.use(
     }
 )
 
-client.interceptors.response.use(
-    response => {
-        return response
-    },
-    error => {
-        if (error.config.errorHandle === false) {
-            return Promise.reject(error)
-        }
-
-        if (error.response) {
-            if (!error.response.data) {
-                console.error(error.response.data)
-                return toast.error('Something went wrong...')
-            }
-
-            if (Array.isArray(error.response.data.message)) {
-                for (const message of error.response.data.message) {
-                    toast.error(message)
-                }
-                return true
-            }
-
-            toast.error(error.response.data.message)
-        }
-    }
-)
-
 export default client
+
+export function axiosStandartErrorHandler(error: any) {
+    if (!error.response) {
+        return toast.error('Something went wrong...')
+    }
+
+    if (!error.response.data) {
+        console.error(error.response.data)
+        return toast.error('Something went wrong...')
+    }
+
+    if (Array.isArray(error.response.data.message)) {
+        for (const message of error.response.data.message) {
+            toast.error(message)
+        }
+        return true
+    }
+
+    toast.error(error.response.data.message)
+}

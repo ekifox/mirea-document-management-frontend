@@ -28,7 +28,7 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
-import axios from '@/common/axios'
+import axios, { axiosStandartErrorHandler } from '@/common/axios'
 import { useRouter } from 'vue-router'
 
 export default defineComponent({
@@ -40,13 +40,17 @@ export default defineComponent({
         const passwordConfirmation = ref('')
 
         async function registerButton() {
-            await axios.post('/authentication/register', {
-                login: login.value,
-                password: password.value,
-                passwordConfirmation: passwordConfirmation.value
-            })
+            try {
+                await axios.post('/authentication/register', {
+                    login: login.value,
+                    password: password.value,
+                    passwordConfirmation: passwordConfirmation.value
+                })
 
-            router.push({ name: 'userEdit' })
+                router.push({ name: 'userEdit' })
+            } catch (e) {
+                axiosStandartErrorHandler(e)
+            }
         }
 
         return { login, password, passwordConfirmation, registerButton }
