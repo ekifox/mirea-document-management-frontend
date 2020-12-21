@@ -1,24 +1,25 @@
 <template>
     <div class="container-fluid" style="max-width: 85%">
-        <h2 class="mb-3">Документы для аудита</h2>
+        <h2 class="mb-3">Мои документы</h2>
         <div class="table-responsive">
             <table class="table table-hover table-striped table-dark">
                 <thead>
                     <tr>
                         <th scope="col">UUID</th>
                         <th scope="col">Название</th>
-                        <th scope="col">Департамент</th>
-                        <th scope="col">Автор</th>
+                        <th scope="col">Статус</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="{ document } in documentAuditionList" :key="document.id">
+                    <tr
+                        style="cursor: pointer"
+                        v-for="document in documentsList"
+                        :key="document.id"
+                        @click="documentGo(document.id)"
+                    >
                         <th scope="row" class="text-truncate" style="max-width: 150px;">{{ document.id }}</th>
                         <td>{{ document.title }}</td>
-                        <td>{{ document.user.department.name }}</td>
-                        <td>
-                            {{ document.user.lastName }} {{ document.user.firstName }} {{ document.user.middleName }}
-                        </td>
+                        <td>{{ documentStatuses[document.status] }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -31,23 +32,25 @@ import { defineComponent, onMounted, ref } from 'vue'
 import axios from '@/common/axios'
 import moment from 'moment'
 import { useRouter } from 'vue-router'
+import { documentStatuses } from '@/common/enum'
 
 export default defineComponent({
     setup() {
         const router = useRouter()
-        const documentAuditionList = ref([])
+        const documentsList = ref([])
 
-        async function getUsers() {
-            const { data } = await axios.get('/document/auditor/list')
-
-            documentAuditionList.value = data
+        async function getDocuments() {
+            const { data } = await axios.get('/document/mylist')
+            documentsList.value = data
         }
 
-        onMounted(() => getUsers())
-
-        return {
-            documentAuditionList
+        function documentGo(id: string) {
+            router.push({ name: 'documentGet', params: { id } })
         }
+
+        onMounted(() => getDocuments())
+
+        return { documentStatuses, documentsList, documentGo }
     }
 })
 </script>

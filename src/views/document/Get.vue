@@ -21,16 +21,6 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Опубликован</label>
-                            <input
-                                type="text"
-                                class="form-control"
-                                :value="document.isAgreed ? 'Да' : 'Нет'"
-                                disabled
-                            />
-                        </div>
-
-                        <div class="mb-3">
                             <label class="form-label">Название</label>
                             <input
                                 type="text"
@@ -87,7 +77,7 @@
                             type="button"
                             class="btn btn-success mr-3"
                             @click="publishFileButton()"
-                            v-if="currentUserCreator && canBePublished"
+                            v-if="currentUserCreator && canBePublished && !isPublished"
                         >
                             Опубликовать
                         </button>
@@ -100,7 +90,7 @@
                             type="button"
                             class="btn btn-warning"
                             @click="uploadFileButton()"
-                            v-if="currentUserCreator"
+                            v-if="currentUserCreator && !isPublished"
                         >
                             Обновить PDF
                         </button>
@@ -129,16 +119,10 @@ import { paths } from '@/common/openapi'
 import { useRouter } from 'vue-router'
 import { useToast } from 'vue-toastification'
 import { stateUser } from '@/common/store'
+import { documentStatuses } from '@/common/enum'
 import Loader from '@/components/loader/index.vue'
 
 type documentInterface = paths['/document/{uuid}']['get']['responses']['200']['application/json']
-
-const documentStatuses = {
-    CREATED: 'Недавно создан',
-    AUDITOR_REJECTED: 'Возвращен на доработку',
-    AUDITOR_AWAITING: 'Проверяется аудиторами',
-    PUBLISHED: 'Опубликован'
-}
 
 function useDocument(documentId: string) {
     const document = reactive({}) as documentInterface
@@ -188,6 +172,8 @@ function useDocumentComputed(document: documentInterface) {
 
     const canBePublished = computed(() => document.auditors && document.auditors.every(x => x.status === 'ACCEPTED'))
 
+    const isPublished = computed(() => document && document.status === 'PUBLISHED')
+
     const currentUserAuditor = computed(() =>
         document.auditors ? document.auditors.find(x => x.userId === stateUser.id && x.status === 'AWAITING') : false
     )
@@ -202,7 +188,8 @@ function useDocumentComputed(document: documentInterface) {
         canBePublished,
         currentUserAuditor,
         auditors,
-        currentUserCreator
+        currentUserCreator,
+        isPublished
     }
 }
 
@@ -240,7 +227,9 @@ export default defineComponent({
     setup(props) {
         const { document, getDocumentData } = useDocument(props.id!)
         const { uploadFileButton, publishFileButton, auditorButton } = useDocumentButtons(props.id!)
-        const { canBePublished, currentUserAuditor, auditors, currentUserCreator } = useDocumentComputed(document)
+        const { canBePublished, currentUserAuditor, auditors, currentUserCreator, isPublished } = useDocumentComputed(
+            document
+        )
         const { linkToPdf, isPdfLoading, showFileButton, getFileLink } = useDocumentLink(props.id!)
 
         onMounted(async () => {
@@ -263,7 +252,8 @@ export default defineComponent({
             canBePublished,
             currentUserAuditor,
             auditors,
-            currentUserCreator
+            currentUserCreator,
+            isPublished
         }
     }
 })

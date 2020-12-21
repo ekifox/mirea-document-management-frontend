@@ -53,9 +53,14 @@ const router = createRouter({
             component: () => import('@/views/document/Search.vue')
         },
         {
-            path: '/document/audition',
-            name: 'documentAudition',
-            component: () => import('@/views/document/Audition.vue')
+            path: '/document/audit',
+            name: 'documentAudit',
+            component: () => import('@/views/document/Audit.vue')
+        },
+        {
+            path: '/document/my',
+            name: 'documentMy',
+            component: () => import('@/views/document/My.vue')
         },
         {
             path: '/admin/users',

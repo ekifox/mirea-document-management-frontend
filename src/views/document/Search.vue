@@ -39,7 +39,7 @@
 
         <div class="container-fluid" style="width: 90%" v-if="!isLoading && response.length > 0">
             <div class="row">
-                <div class="col-md-3" v-for="{ document, score, highlight } in response" :key="document.id">
+                <div class="col-md-3 mb-3" v-for="{ document, score, highlight } in response" :key="document.id">
                     <div class="card">
                         <div class="card-header">
                             <div style="cursor: pointer" @click="openDocument(document.id)">{{ document.title }}</div>

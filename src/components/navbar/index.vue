@@ -16,8 +16,10 @@
             <template v-if="stateIsUserAuthed">
                 <div class="collapse navbar-collapse">
                     <ul class="navbar-nav">
-                        <RouterItem to="/document/search" name="Поиск" />
+                        <RouterItem to="/document/search" name="Поиск опубликованных" />
                         <RouterItem to="/document/create" name="Добавить документ" />
+                        <RouterItem to="/document/my" name="Мои документы" />
+                        <RouterItem to="/document/audit" name="Документы для аудита" />
                         <RouterItem
                             to="/admin/users"
                             name="Просмотреть пользователей"

@@ -18,7 +18,7 @@
 </template>
 
 <script lang="ts">
-import axios from '@/common/axios'
+import axios, { axiosStandartErrorHandler } from '@/common/axios'
 import { defineComponent } from 'vue'
 import { useRouter } from 'vue-router'
 import { useToast } from 'vue-toastification'
@@ -41,15 +41,19 @@ export default defineComponent({
             const formData = new FormData()
             formData.append('document', file)
 
-            await axios.put('/document/upload', formData, {
-                params: {
-                    uuid: props.id
-                }
-            })
+            try {
+                await axios.put('/document/upload', formData, {
+                    params: {
+                        uuid: props.id
+                    }
+                })
 
-            toast.success('Файл загружен')
+                toast.success('Файл загружен')
 
-            router.push({ name: 'documentGet', params: { id: props.id! } })
+                router.push({ name: 'documentGet', params: { id: props.id! } })
+            } catch (e) {
+                axiosStandartErrorHandler(e)
+            }
         }
 
         return { filePickedEvent, uploadDocument }
